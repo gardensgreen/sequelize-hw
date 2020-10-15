@@ -120,6 +120,39 @@ async function main() {
         },
     });
 
+    const cat = Cat.build({
+        // Empty cat. All fields set to `null`.
+    });
+
+    try {
+        // Try to save cat to the database.
+        await cat.save();
+        console.log("Save success!");
+        console.log(JSON.stringify(cat, null, 2));
+    } catch (err) {
+        console.log("Save failed!");
+
+        // Print list of errors.
+        for (const validationError of err.errors) {
+            console.log("*", validationError.message);
+        }
+    }
+
+    // Fix the various validation problems.
+    cat.firstName = "Markov";
+    cat.specialSkill = "sleeping";
+    cat.age = 4;
+
+    try {
+        // Trying to save a second time!
+        await cat.save();
+
+        console.log("Success!");
+    } catch (err) {
+        // The save *should* succeed!
+        console.log(err);
+    }
+
     await sequelize.close();
 }
 
